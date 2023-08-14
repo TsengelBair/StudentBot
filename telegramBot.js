@@ -55,7 +55,8 @@ function setupBot() {
     `;
       await bot.sendMessage(chatId, welcomeMessage);
     } else if (text === "/schedule") {
-      const scheduleMessage = "В летнее время у меня более гибкий график...";
+      const scheduleMessage =
+        "В летнее время у меня более гибкий график, что позволяет проводить занятия в любое удобное для вас время. Пишите, и мы обязательно договоримся!";
       bot.sendMessage(chatId, scheduleMessage);
     } else if (text === "/commands") {
       const commandsMessage = "Список команд:";
