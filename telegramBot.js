@@ -1,4 +1,6 @@
 const TelegramApi = require("node-telegram-bot-api");
+const { getSchedule, formatSchedule } = require("./mongodb");
+
 require("dotenv").config();
 
 function setupBot() {
@@ -37,7 +39,7 @@ function setupBot() {
     const chatId = msg.chat.id;
 
     if (text === "/start") {
-      const username = msg.from.first_name || "пользователь без имени";
+      const username = msg.from.first_name || "дорогой гость";
       const welcomeMessage = `
       Привет, ${username}! 👋 Я - ассистент Баира, готовый помочь тебе в учебе! 📚✨
       
@@ -55,9 +57,17 @@ function setupBot() {
     `;
       await bot.sendMessage(chatId, welcomeMessage);
     } else if (text === "/schedule") {
-      const scheduleMessage =
-        "В летнее время у меня более гибкий график, что позволяет проводить занятия в любое удобное для вас время. Пишите, и мы обязательно договоримся!";
-      bot.sendMessage(chatId, scheduleMessage);
+      try {
+        const schedule = await getSchedule();
+        const formattedSchedule = formatSchedule(schedule);
+        bot.sendMessage(chatId, formattedSchedule);
+      } catch (err) {
+        console.error(err);
+        bot.sendMessage(
+          chatId,
+          "Произошла ошибка при получении расписания. Попробуйте позже."
+        );
+      }
     } else if (text === "/commands") {
       const commandsMessage = "Список команд:";
       bot.sendMessage(chatId, commandsMessage, {
